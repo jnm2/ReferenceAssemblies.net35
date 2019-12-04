@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>jnm2.ReferenceAssemblies.net35</id>
-    <version>1.0.0-preview.2</version>
+    <version>1.0.0</version>
     <authors>Microsoft</authors>
     <owners>jnm2</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
