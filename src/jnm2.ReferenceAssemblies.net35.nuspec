@@ -10,7 +10,24 @@
     <license type="expression">MIT</license>
     <projectUrl>https://github.com/jnm2/ReferenceAssemblies.net35</projectUrl>
     <iconUrl>http://go.microsoft.com/fwlink/?LinkID=288859</iconUrl>
-    <description>Microsoft .NET Framework Reference Assemblies</description>
+    <description><![CDATA[A community answer to Microsoft’s decision to single out net35 by excluding it from the https://www.nuget.org/packages/Microsoft.NETFramework.ReferenceAssemblies/ package.
+
+This package provides the .NET Framework 3.5 reference assemblies so that net35 projects can be built using the dotnet CLI.
+Example project that targets multiple frameworks:
+
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net35;net40;netstandard2.0;netcoreapp3.0</TargetFrameworks>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.0" />
+    <PackageReference Include="jnm2.ReferenceAssemblies.net35" Version="1.0.0" />
+  </ItemGroup>
+
+</Project>
+]]></description>
     <copyright>© Microsoft Corporation. All rights reserved.</copyright>
     <dependencies>
       <group targetFramework=".NETFramework3.5" />
