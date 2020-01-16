@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Xml.Linq;
 
 public static partial class Program
@@ -143,7 +144,16 @@ public static partial class Program
                     && usedFileNames.Add(Path.GetFileName(filePath))
                     && assemblyNames.Contains(Path.GetFileNameWithoutExtension(filePath)))
                 {
-                    builder.AddFiles(rootPath, source: filePath, RelativeNupkgDestination);
+                    if (HasAnyExtension(filePath, ".xml"))
+                    {
+                        builder.AddFiles(rootPath, source: filePath, RelativeNupkgDestination);
+                    }
+                    else
+                    {
+                        var name = AssemblyName.GetAssemblyName(filePath).Name + Path.GetExtension(filePath);
+
+                        builder.AddFiles(rootPath, source: filePath, Path.Combine(RelativeNupkgDestination, name));
+                    }
                 }
             }
         }
