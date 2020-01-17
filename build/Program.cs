@@ -144,16 +144,11 @@ public static partial class Program
                     && usedFileNames.Add(Path.GetFileName(filePath))
                     && assemblyNames.Contains(Path.GetFileNameWithoutExtension(filePath)))
                 {
-                    if (HasAnyExtension(filePath, ".xml"))
-                    {
-                        builder.AddFiles(rootPath, source: filePath, RelativeNupkgDestination);
-                    }
-                    else
-                    {
-                        var name = AssemblyName.GetAssemblyName(filePath).Name + Path.GetExtension(filePath);
+                    var destination = HasAnyExtension(filePath, ".xml")
+                        ? RelativeNupkgDestination
+                        : Path.Combine(RelativeNupkgDestination, AssemblyName.GetAssemblyName(filePath).Name + Path.GetExtension(filePath));
 
-                        builder.AddFiles(rootPath, source: filePath, Path.Combine(RelativeNupkgDestination, name));
-                    }
+                    builder.AddFiles(rootPath, source: filePath, destination);
                 }
             }
         }
