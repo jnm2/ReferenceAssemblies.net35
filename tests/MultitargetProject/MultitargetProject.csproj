@@ -3,10 +3,122 @@
   <PropertyGroup>
     <TargetFrameworks>net35;net40;netstandard2.0;netcoreapp3.0</TargetFrameworks>
   </PropertyGroup>
-  
+
   <ItemGroup>
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.0" />
     <PackageReference Include="jnm2.ReferenceAssemblies.net35" Version="1.0.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
+    <Reference Include="Accessibility" />
+    <Reference Include="AspNetMMCExt" />
+    <Reference Include="cscompmgd" />
+    <Reference Include="CustomMarshalers" />
+    <Reference Include="IEExecRemote" />
+    <Reference Include="IEHost" />
+    <Reference Include="IIEHost" />
+    <Reference Include="ISymWrapper" />
+    <Reference Include="Microsoft.Build.Conversion.v3.5" />
+    <Reference Include="Microsoft.Build.Engine" />
+    <Reference Include="Microsoft.Build.Framework" />
+    <Reference Include="Microsoft.Build.Tasks" Aliases="net20" />
+    <Reference Include="Microsoft.Build.Tasks.v3.5" Aliases="net35" />
+    <Reference Include="Microsoft.Build.Utilities" Aliases="net20" />
+    <Reference Include="Microsoft.Build.Utilities.v3.5" Aliases="net35" />
+    <Reference Include="Microsoft.Data.Entity.Build.Tasks" />
+    <Reference Include="Microsoft.JScript" />
+    <Reference Include="Microsoft.VisualBasic.Compatibility.Data" />
+    <Reference Include="Microsoft.VisualBasic.Compatibility" />
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="Microsoft.VisualBasic.Vsa" />
+    <Reference Include="Microsoft.VisualC" />
+    <Reference Include="Microsoft.VisualC.STLCLR" />
+    <Reference Include="Microsoft.Vsa" />
+    <Reference Include="Microsoft.Vsa.Vb.CodeDOMProcessor" />
+    <Reference Include="Microsoft_VsaVb" />
+    <Reference Include="mscorlib" />
+    <Reference Include="PresentationBuildTasks" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework.Aero" Aliases="aero" />
+    <Reference Include="PresentationFramework.Classic" Aliases="classic" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="PresentationFramework.Luna" Aliases="luna" />
+    <Reference Include="PresentationFramework.Royale" Aliases="royale" />
+    <Reference Include="ReachFramework" />
+    <Reference Include="Sentinel.v3.5Client" />
+    <Reference Include="sysglobl" />
+    <Reference Include="System.AddIn.Contract" />
+    <Reference Include="System.AddIn" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Configuration.Install" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.Entity.Design" />
+    <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Data.Linq" />
+    <Reference Include="System.Data.OracleClient" />
+    <Reference Include="System.Data.Services.Client" />
+    <Reference Include="System.Data.Services.Design" />
+    <Reference Include="System.Data.Services" />
+    <Reference Include="System.Data.SqlXml" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.DirectoryServices.AccountManagement" />
+    <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.DirectoryServices.Protocols" />
+    <Reference Include="System" />
+    <Reference Include="System.Drawing.Design" />
+    <Reference Include="System.Drawing" />
+    <!-- System.EnterpriseServices cannot be referenced without requiring System.EnterpriseServices.Wrapper. -->
+    <Reference Include="System.IdentityModel" />
+    <Reference Include="System.IdentityModel.Selectors" />
+    <Reference Include="System.IO.Log" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Management.Instrumentation" />
+    <Reference Include="System.Messaging" />
+    <Reference Include="System.Net" />
+    <Reference Include="System.Printing" />
+    <Reference Include="System.Runtime.Remoting" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Runtime.Serialization.Formatters.Soap" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Web" />
+    <Reference Include="System.ServiceProcess" />
+    <Reference Include="System.Speech" />
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.DynamicData.Design" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity.Design" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.Extensions.Design" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Mobile" />
+    <Reference Include="System.Web.RegularExpressions" />
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Presentation" />
+    <Reference Include="System.Workflow.Activities" />
+    <Reference Include="System.Workflow.ComponentModel" />
+    <Reference Include="System.Workflow.Runtime" />
+    <Reference Include="System.WorkflowServices" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="UIAutomationClient" />
+    <Reference Include="UIAutomationClientsideProviders" />
+    <Reference Include="UIAutomationProvider" />
+    <Reference Include="UIAutomationTypes" />
+    <Reference Include="WindowsBase" />
+    <Reference Include="WindowsFormsIntegration" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net35'">
+    <Compile Include="..\ClassUsingEveryAssembly.cs" />
   </ItemGroup>
 
 </Project>
