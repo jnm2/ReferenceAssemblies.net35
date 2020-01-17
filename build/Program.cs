@@ -144,9 +144,9 @@ public static partial class Program
                     && usedFileNames.Add(Path.GetFileName(filePath))
                     && assemblyNames.Contains(Path.GetFileNameWithoutExtension(filePath)))
                 {
-                    var destination = HasAnyExtension(filePath, ".xml")
-                        ? RelativeNupkgDestination
-                        : Path.Combine(RelativeNupkgDestination, AssemblyName.GetAssemblyName(filePath).Name + Path.GetExtension(filePath));
+                    var destination = HasAnyExtension(filePath, ".dll")
+                        ? Path.Combine(RelativeNupkgDestination, AssemblyName.GetAssemblyName(filePath).Name + ".dll")
+                        : RelativeNupkgDestination;
 
                     builder.AddFiles(rootPath, source: filePath, destination);
                 }
