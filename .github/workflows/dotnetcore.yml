@@ -23,3 +23,22 @@ jobs:
       with:
         name: package
         path: artifacts
+
+  linux_test:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+
+    - uses: actions/checkout@v1
+    
+    - name: Retrieve package built on Windows
+      uses: actions/download-artifact@v1.0.0
+      with:
+        name: package
+        path: artifacts
+
+    - name: Set up .NET Core
+      uses: actions/setup-dotnet@v1
+
+    - name: Test
+      run: dotnet build tests
