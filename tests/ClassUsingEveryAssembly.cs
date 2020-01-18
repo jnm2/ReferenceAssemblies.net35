@@ -1,5 +1,7 @@
+#if NET35
 extern alias net20;
 extern alias net35;
+#endif
 
 extern alias aero;
 extern alias classic;
@@ -15,31 +17,43 @@ public static class ClassUsingEveryAssembly
     public static System.Type[] TypeFromEachAssembly =
     {
         typeof(Accessibility.IAccessible), // Accessibility
+#if NET35
         typeof(Microsoft.Aspnet.Snapin.IAspNetManagementUtility), // AspNetMMCExt
         typeof(Microsoft.CSharp.Compiler), // cscompmgd
+#endif
         typeof(System.Runtime.InteropServices.CustomMarshalers.EnumerableToDispatchMarshaler), // CustomMarshalers
+#if NET35
         typeof(IEHost.Execute.IEExecuteRemote), // IEExecRemote
         typeof(Microsoft.IE.Manager), // IEHost
         typeof(Microsoft.IE.IHostEx), // IIEHost
+#endif
         typeof(System.Diagnostics.SymbolStore.SymDocument), // ISymWrapper
+#if NET35
         typeof(Microsoft.Build.Conversion.ProjectFileConverter), // Microsoft.Build.Conversion.v3.5
+#endif
         typeof(Microsoft.Build.BuildEngine.Engine), // Microsoft.Build.Engine
         typeof(Microsoft.Build.Framework.ITask), // Microsoft.Build.Framework
+#if NET35
         typeof(net20::Microsoft.Build.Tasks.Exec), // Microsoft.Build.Tasks
         typeof(net35::Microsoft.Build.Tasks.Exec), // Microsoft.Build.Tasks.v3.5
         typeof(net20::Microsoft.Build.Utilities.Task), // Microsoft.Build.Utilities
         typeof(net35::Microsoft.Build.Utilities.Task), // Microsoft.Build.Utilities.v3.5
         typeof(Microsoft.Data.Entity.Build.Tasks.EntityDeploy), // Microsoft.Data.Entity.Build.Tasks
+#endif
         typeof(Microsoft.JScript.JSObject), // Microsoft.JScript
         typeof(Microsoft.VisualBasic.Compatibility.VB6.IDataFormat), // Microsoft.VisualBasic.Compatibility.Data
         typeof(Microsoft.VisualBasic.Compatibility.VB6.ButtonArray), // Microsoft.VisualBasic.Compatibility
         typeof(Microsoft.VisualBasic.Constants), // Microsoft.VisualBasic
+#if NET35
         typeof(Microsoft.VisualBasic.Vsa.VsaEngine), // Microsoft.VisualBasic.Vsa
+#endif
         typeof(Microsoft.VisualC.IsConstModifier), // Microsoft.VisualC
         typeof(Microsoft.VisualC.StlClr.IList<>), // Microsoft.VisualC.STLCLR
+#if NET35
         typeof(Microsoft.Vsa.IVsaEngine), // Microsoft.Vsa
         typeof(Microsoft.Vsa.Vb.CodeDOM.CodeDOMProcessor), // Microsoft.Vsa.Vb.CodeDOMProcessor
         typeof(Microsoft_VsaVb.VsaEngine), // Microsoft_VsaVb
+#endif
         typeof(System.Object), // mscorlib
         typeof(Microsoft.Build.Tasks.Windows.ResourcesGenerator), // PresentationBuildTasks
         typeof(System.Windows.ContentElement), // PresentationCore
