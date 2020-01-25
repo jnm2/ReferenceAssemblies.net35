@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>jnm2.ReferenceAssemblies.net35</id>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <authors>Microsoft</authors>
     <owners>jnm2</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -23,7 +23,7 @@ Example project that targets multiple frameworks:
   
   <ItemGroup>
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.0" />
-    <PackageReference Include="jnm2.ReferenceAssemblies.net35" Version="1.0.0" />
+    <PackageReference Include="jnm2.ReferenceAssemblies.net35" Version="1.0.1" />
   </ItemGroup>
 
 </Project>
