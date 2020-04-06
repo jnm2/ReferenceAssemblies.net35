@@ -39,6 +39,9 @@ public static partial class Program
                 : null,
             targetFrameworkFallbackSearchPaths: null);
 
+        if (!referenceAssemblyPaths.Any())
+            throw new NotImplementedException("No reference assemblies found.");
+
         var redistListsByRelativePath = CombineRedistLists(referenceAssemblyPaths);
 
         var builder = new PackageBuilder($@"src\jnm2.ReferenceAssemblies.{packageIdSuffix}.nuspec", basePath: "src", propertyProvider: null, includeEmptyDirectories: false);
