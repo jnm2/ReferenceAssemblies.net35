@@ -14,12 +14,21 @@ public static partial class Program
     {
         SetCurrentDirectoryToRoot();
 
-        Build(
-            packageIdSuffix: "net35",
-            targetFrameworkIdentifier: ".NETFramework",
-            targetFrameworkVersion: "v3.5",
-            useVisualStudioTargetFrameworkRootPath: false,
-            artifactsDir: "artifacts");
+        var packages = new[]
+        {
+            (packageIdSuffix: "net35", frameworkName: ".NETFramework", frameworkVersion: "v3.5", useVSTargetFrameworkRootPath: false),
+            (packageIdSuffix: "MonoAndroid9.0", frameworkName: "MonoAndroid", frameworkVersion: "v9.0", useVSTargetFrameworkRootPath: true),
+        };
+
+        foreach (var package in packages)
+        {
+            Build(
+                package.packageIdSuffix,
+                package.frameworkName,
+                package.frameworkVersion,
+                package.useVSTargetFrameworkRootPath,
+                artifactsDir: "artifacts");
+        }
     }
 
     private static void Build(

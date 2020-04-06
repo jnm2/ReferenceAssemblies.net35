@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>jnm2.ReferenceAssemblies.MonoAndroid9.0</id>
+    <version>1.0.1</version>
+    <authors>Microsoft</authors>
+    <owners>jnm2</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <developmentDependency>true</developmentDependency>
+    <license type="expression">MIT</license>
+    <projectUrl>https://github.com/jnm2/ReferenceAssemblies.net35</projectUrl>
+    <iconUrl>http://go.microsoft.com/fwlink/?LinkID=288859</iconUrl>
+    <description>This package provides reference assemblies so that MonoAndroid 9.0 projects can be built using the dotnet CLI.</description>
+    <copyright>© Microsoft Corporation. All rights reserved.</copyright>
+    <dependencies>
+      <group targetFramework="MonoAndroid9.0" />
+    </dependencies>
+  </metadata>
+</package>
