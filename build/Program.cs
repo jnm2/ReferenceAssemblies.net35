@@ -2,6 +2,7 @@ using Microsoft.Build.Utilities;
 using NuGet.Packaging;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -9,40 +10,55 @@ using System.Xml.Linq;
 
 public static partial class Program
 {
-    private const string PackageId = "jnm2.ReferenceAssemblies.net35";
-    private const string FrameworkName = ".NETFramework";
-    private const string FrameworkVersion = "v3.5";
-    private const string RelativeNupkgDestination = @"build\" + FrameworkName + @"\" + FrameworkVersion;
-    private const string ArtifactsDir = "artifacts";
-
     public static void Main()
     {
         SetCurrentDirectoryToRoot();
 
+        Build(
+            packageIdSuffix: "net35",
+            targetFrameworkIdentifier: ".NETFramework",
+            targetFrameworkVersion: "v3.5",
+            useVisualStudioTargetFrameworkRootPath: false,
+            artifactsDir: "artifacts");
+    }
+
+    private static void Build(
+        string packageIdSuffix,
+        string targetFrameworkIdentifier,
+        string targetFrameworkVersion,
+        bool useVisualStudioTargetFrameworkRootPath,
+        string artifactsDir)
+    {
         // https://github.com/microsoft/msbuild/blob/9c33693c492a0cb99474dcb703bfd0947056d8a9/src/Tasks/GetReferenceAssemblyPaths.cs#L236-L241
         var referenceAssemblyPaths = ToolLocationHelper.GetPathToReferenceAssemblies(
-            FrameworkName,
-            FrameworkVersion,
+            targetFrameworkIdentifier,
+            targetFrameworkVersion,
             targetFrameworkProfile: "",
-            targetFrameworkRootPath: null,
+            targetFrameworkRootPath: useVisualStudioTargetFrameworkRootPath
+                ? GetVisualStudioTargetFrameworkRootPath()
+                : null,
             targetFrameworkFallbackSearchPaths: null);
 
         var redistListsByRelativePath = CombineRedistLists(referenceAssemblyPaths);
 
-        var builder = new PackageBuilder($@"src\{PackageId}.nuspec", basePath: "src", propertyProvider: null, includeEmptyDirectories: false);
+        var builder = new PackageBuilder($@"src\jnm2.ReferenceAssemblies.{packageIdSuffix}.nuspec", basePath: "src", propertyProvider: null, includeEmptyDirectories: false);
 
-        AddRedistFilesToBuilder(referenceAssemblyPaths, redistListsByRelativePath, builder, out var excludedAssemblyNames);
+        var relativeNupkgDestination = $@"build\{targetFrameworkIdentifier}\{targetFrameworkVersion}";
 
-        SaveCombinedRedistLists(redistListsByRelativePath, excludedAssemblyNames);
+        AddRedistFilesToBuilder(relativeNupkgDestination, referenceAssemblyPaths, redistListsByRelativePath, builder, out var excludedAssemblyNames);
+
+        SaveCombinedRedistLists(relativeNupkgDestination, redistListsByRelativePath, excludedAssemblyNames);
 
         builder.AddFiles("src", source: @"**\*", destination: "", exclude: "*.nuspec");
 
-        Directory.CreateDirectory(ArtifactsDir);
+        Directory.CreateDirectory(artifactsDir);
 
-        using (var stream = File.Create(Path.Combine(ArtifactsDir, $"{builder.Id}.{builder.Version}.nupkg")))
+        var nupkgPath = Path.Combine(artifactsDir, $"{builder.Id}.{builder.Version}.nupkg");
+
+        using (var stream = File.Create(nupkgPath))
             builder.Save(stream);
 
-        Console.WriteLine("Build succeeded.");
+        Console.WriteLine("Built successfully: " + nupkgPath);
     }
 
     private static void SetCurrentDirectoryToRoot()
@@ -58,6 +74,35 @@ public static partial class Program
         }
 
         Directory.SetCurrentDirectory(current);
+    }
+
+    private static string GetVisualStudioTargetFrameworkRootPath()
+    {
+        using var process = new Process
+        {
+            StartInfo =
+            {
+                FileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), @"Microsoft Visual Studio\Installer\vswhere.exe"),
+                Arguments = @"-find Common7\IDE\ReferenceAssemblies\Microsoft\Framework",
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+            }
+        };
+
+        process.Start();
+
+        var lines = new List<string>();
+        while (process.StandardOutput.ReadLine() is { } line)
+            lines.Add(line);
+
+        process.WaitForExit();
+        if (process.ExitCode != 0)
+            throw new NotImplementedException("vswhere exited with code " + process.ExitCode);
+
+        if (lines.Count != 1)
+            throw new NotImplementedException("Expected a single line. Lines:" + Environment.NewLine + string.Join(Environment.NewLine, lines));
+
+        return lines[0];
     }
 
     private static IReadOnlyDictionary<string, RedistList> CombineRedistLists(IList<string> referenceAssemblyPaths)
@@ -77,7 +122,6 @@ public static partial class Program
 
         return redistListByRelativePath;
     }
-
 
     private static IReadOnlyCollection<RedistList> ReadRedistLists(string rootPath)
     {
@@ -112,11 +156,14 @@ public static partial class Program
         return fullPath.Substring(relativeParentPath.Length);
     }
 
-    private static void SaveCombinedRedistLists(IReadOnlyDictionary<string, RedistList> redistListsByRelativePath, IReadOnlyCollection<string> excludedAssemblyNames)
+    private static void SaveCombinedRedistLists(
+        string relativeNupkgDestination,
+        IReadOnlyDictionary<string, RedistList> redistListsByRelativePath,
+        IReadOnlyCollection<string> excludedAssemblyNames)
     {
         foreach (var listByRelativePath in redistListsByRelativePath)
         {
-            var combinedListPath = Path.Combine("src", RelativeNupkgDestination, listByRelativePath.Key);
+            var combinedListPath = Path.Combine("src", relativeNupkgDestination, listByRelativePath.Key);
             Directory.CreateDirectory(Path.GetDirectoryName(combinedListPath));
 
             listByRelativePath.Value.RemoveAssemblies(excludedAssemblyNames);
@@ -125,6 +172,7 @@ public static partial class Program
     }
 
     private static void AddRedistFilesToBuilder(
+        string relativeNupkgDestination,
         IList<string> referenceAssemblyPaths,
         IReadOnlyDictionary<string, RedistList> redistListsByRelativePath,
         PackageBuilder builder,
@@ -145,8 +193,8 @@ public static partial class Program
                     && assemblyNames.Contains(Path.GetFileNameWithoutExtension(filePath)))
                 {
                     var destination = HasAnyExtension(filePath, ".dll")
-                        ? Path.Combine(RelativeNupkgDestination, AssemblyName.GetAssemblyName(filePath).Name + ".dll")
-                        : RelativeNupkgDestination;
+                        ? Path.Combine(relativeNupkgDestination, AssemblyName.GetAssemblyName(filePath).Name + ".dll")
+                        : relativeNupkgDestination;
 
                     builder.AddFiles(rootPath, source: filePath, destination);
                 }
