@@ -44,15 +44,17 @@ public static partial class Program
 
         var redistListsByRelativePath = CombineRedistLists(referenceAssemblyPaths);
 
-        var builder = new PackageBuilder($@"src\jnm2.ReferenceAssemblies.{packageIdSuffix}.nuspec", basePath: "src", propertyProvider: null, includeEmptyDirectories: false);
+        var packageBasePath = Path.Combine("src", packageIdSuffix);
+
+        var builder = new PackageBuilder($@"{packageBasePath}\jnm2.ReferenceAssemblies.{packageIdSuffix}.nuspec", packageBasePath, propertyProvider: null, includeEmptyDirectories: false);
 
         var relativeNupkgDestination = $@"build\{targetFrameworkIdentifier}\{targetFrameworkVersion}";
 
         AddRedistFilesToBuilder(relativeNupkgDestination, referenceAssemblyPaths, redistListsByRelativePath, builder, out var excludedAssemblyNames);
 
-        SaveCombinedRedistLists(relativeNupkgDestination, redistListsByRelativePath, excludedAssemblyNames);
+        SaveCombinedRedistLists(packageBasePath, relativeNupkgDestination, redistListsByRelativePath, excludedAssemblyNames);
 
-        builder.AddFiles("src", source: @"**\*", destination: "", exclude: "*.nuspec");
+        builder.AddFiles(packageBasePath, source: @"**\*", destination: "", exclude: "*.nuspec");
 
         Directory.CreateDirectory(artifactsDir);
 
@@ -160,13 +162,14 @@ public static partial class Program
     }
 
     private static void SaveCombinedRedistLists(
+        string packageBasePath,
         string relativeNupkgDestination,
         IReadOnlyDictionary<string, RedistList> redistListsByRelativePath,
         IReadOnlyCollection<string> excludedAssemblyNames)
     {
         foreach (var listByRelativePath in redistListsByRelativePath)
         {
-            var combinedListPath = Path.Combine("src", relativeNupkgDestination, listByRelativePath.Key);
+            var combinedListPath = Path.Combine(packageBasePath, relativeNupkgDestination, listByRelativePath.Key);
             Directory.CreateDirectory(Path.GetDirectoryName(combinedListPath));
 
             listByRelativePath.Value.RemoveAssemblies(excludedAssemblyNames);
