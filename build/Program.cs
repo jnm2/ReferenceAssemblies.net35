@@ -4,7 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
+using System.Reflection.Metadata;
+using System.Reflection.PortableExecutable;
 using System.Xml.Linq;
 
 public static partial class Program
@@ -144,9 +145,18 @@ public static partial class Program
                     && usedFileNames.Add(Path.GetFileName(filePath))
                     && assemblyNames.Contains(Path.GetFileNameWithoutExtension(filePath)))
                 {
-                    var destination = HasAnyExtension(filePath, ".dll")
-                        ? Path.Combine(RelativeNupkgDestination, AssemblyName.GetAssemblyName(filePath).Name + ".dll")
-                        : RelativeNupkgDestination;
+                    var destination = RelativeNupkgDestination;
+
+                    if (HasAnyExtension(filePath, ".dll"))
+                    {
+                        using var assemblyStream = File.OpenRead(filePath);
+                        using var peReader = new PEReader(assemblyStream);
+                        var reader = peReader.GetMetadataReader();
+
+                        var assemblyName = reader.GetString(reader.GetAssemblyDefinition().Name);
+
+                        destination = Path.Combine(RelativeNupkgDestination, assemblyName + ".dll");
+                    }
 
                     builder.AddFiles(rootPath, source: filePath, destination);
                 }
