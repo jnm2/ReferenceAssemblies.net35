@@ -2,6 +2,7 @@ using Microsoft.Build.Utilities;
 using NuGet.Packaging;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Reflection.Metadata;
@@ -145,8 +146,6 @@ public static partial class Program
                     && usedFileNames.Add(Path.GetFileName(filePath))
                     && assemblyNames.Contains(Path.GetFileNameWithoutExtension(filePath)))
                 {
-                    var destination = RelativeNupkgDestination;
-
                     if (HasAnyExtension(filePath, ".dll"))
                     {
                         using var assemblyStream = File.OpenRead(filePath);
@@ -155,10 +154,26 @@ public static partial class Program
 
                         var assemblyName = reader.GetString(reader.GetAssemblyDefinition().Name);
 
-                        destination = Path.Combine(RelativeNupkgDestination, assemblyName + ".dll");
-                    }
+                        builder.AddFiles(rootPath, source: filePath, Path.Combine(RelativeNupkgDestination, assemblyName + ".dll"));
 
-                    builder.AddFiles(rootPath, source: filePath, destination);
+                        var additionalMetadataFiles = reader.AssemblyFiles
+                            .Select(reader.GetAssemblyFile)
+                            .Where(f => f.ContainsMetadata)
+                            .Select(f => reader.GetString(f.Name))
+                            .ToList();
+
+                        foreach (var additionalFile in additionalMetadataFiles)
+                        {
+                            builder.AddFiles(
+                                rootPath,
+                                source: Path.Combine(rootPath, additionalFile),
+                                Path.Combine(RelativeNupkgDestination, additionalFile));
+                        }
+                    }
+                    else
+                    {
+                        builder.AddFiles(rootPath, source: filePath, RelativeNupkgDestination);
+                    }
                 }
             }
         }
